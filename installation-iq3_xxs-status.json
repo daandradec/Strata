@@ -1,0 +1,21 @@
+{
+  "stage": "stopped",
+  "model": "IQ3_XXS",
+  "context": 131072,
+  "updated_at": "2026-10-07T19:05:58.145309+00:00",
+  "health": {
+    "status": "ok",
+    "max_context": 131072,
+    "model": "qwen3.8-flash-next-iq3_xxs",
+    "images": false,
+    "api_key": false,
+    "loaded": false,
+    "service": "strata"
+  },
+  "long_prompt_tokens": 120047,
+  "long_test_answer": "contexto-verificado-128k",
+  "old_iq3_s_removed": true,
+  "auto_compact_token_limit": 110000,
+  "url": "http://127.0.0.1:8081",
+  "stopped_at": "2026-10-07T19:16:56.690391+00:00"
+}

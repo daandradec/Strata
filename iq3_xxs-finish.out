@@ -1,0 +1,4 @@
+{"stage": "testing_long_context", "model": "IQ3_XXS", "context": 131072, "updated_at": "2026-10-07T19:02:28.611767+00:00", "port": 8081}
+{"stage": "cleaning_old_model", "model": "IQ3_XXS", "context": 131072, "updated_at": "2026-10-07T19:05:57.581936+00:00", "long_prompt_tokens": 120047, "port": 8081}
+Pesos, paquete, configuracion y registros exclusivos de IQ3_S eliminados.
+{"stage": "verified", "model": "IQ3_XXS", "context": 131072, "updated_at": "2026-10-07T19:05:58.145309+00:00", "health": {"status": "ok", "max_context": 131072, "model": "qwen3.8-flash-next-iq3_xxs", "images": false, "api_key": false, "loaded": true, "service": "strata"}, "long_prompt_tokens": 120047, "long_test_answer": "contexto-verificado-128k", "old_iq3_s_removed": true, "auto_compact_token_limit": 110000, "url": "http://127.0.0.1:8081"}

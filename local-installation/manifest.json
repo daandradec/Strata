@@ -1,0 +1,39 @@
+{
+  "branch": "strata-local-installation",
+  "model": "IQ3_XXS",
+  "context_tokens": 131072,
+  "compact_at_tokens": 110000,
+  "port": 8081,
+  "files": [
+    {
+      "source": "E:\\Strata-data\\start_model_qwen.ps1",
+      "snapshot": "local-installation\\launchers\\start_model_qwen.ps1",
+      "sha256": "14c7c46e7b044b981a81c06d3c5813898b1aab34fd787beecfa2031f38bc393c"
+    },
+    {
+      "source": "E:\\Strata-data\\start_web_strata.ps1",
+      "snapshot": "local-installation\\launchers\\start_web_strata.ps1",
+      "sha256": "8306e8bfa6a57efe2baac21fae7522c7cdfabd7e45bad9c8ede3aab6e6d6407e"
+    },
+    {
+      "source": "E:\\Strata\\run-iq3_xxs.bat",
+      "snapshot": "local-installation\\launchers\\run-iq3_xxs.bat",
+      "sha256": "baeec224be722bffb9f9de43d8e972f1005b266c31a58d96c62aa3c5abbe7df5"
+    },
+    {
+      "source": "E:\\Strata\\strata-iq3_xxs.json",
+      "snapshot": "local-installation\\config\\strata-iq3_xxs.json",
+      "sha256": "d0c1cbbb35e54176c66769b1edcabe32e734c2b54cb184b1bad56825e8e77037"
+    },
+    {
+      "source": "C:\\Users\\daand\\.codex\\qwen.config.toml",
+      "snapshot": "local-installation\\codex\\qwen.config.toml",
+      "sha256": "7771ce25faa978462e824241f125aa04961232265a551709bff4c1e0ed91fde1"
+    },
+    {
+      "source": "C:\\Users\\daand\\.codex\\model-catalogs\\strata.json",
+      "snapshot": "local-installation\\codex\\strata-model-catalog.json",
+      "sha256": "8df15f476da37a477d10930a35fc8c29f85da553b1e1d1ad796c3c08bfbb8e2c"
+    }
+  ]
+}

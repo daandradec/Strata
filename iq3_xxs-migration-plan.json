@@ -1,0 +1,44 @@
+{
+  "state": "complete",
+  "created_at": "2026-10-07T16:21:49.533630+00:00",
+  "source_model": "IQ3_S",
+  "target_model": "IQ3_XXS",
+  "new_download_bytes": 47039860096,
+  "shared_lookup_bytes": 28800138432,
+  "estimated_bytes_reclaimed": 106660000000,
+  "delete_only_after_new_model_verified": true,
+  "directories": [
+    "E:\\Strata-data\\models\\IQ3_S",
+    "E:\\Strata-data\\packs\\iq3_s"
+  ],
+  "files": [
+    "E:\\Strata\\CONTINUAR-MANANA.bat",
+    "E:\\Strata\\download-iq3_s-parallel.py",
+    "E:\\Strata\\increase-qwen-context.py",
+    "E:\\Strata\\install-iq3_s-local.py",
+    "E:\\Strata\\installation-iq3_s-status.json",
+    "E:\\Strata\\installation-iq3_s-worker.err",
+    "E:\\Strata\\installation-iq3_s-worker.out",
+    "E:\\Strata\\installation-iq3_s-worker.pid",
+    "E:\\Strata\\installation-iq3_s.log",
+    "E:\\Strata\\run-iq3_s.bat",
+    "E:\\Strata\\strata-iq3_s.json",
+    "E:\\Strata\\strata-iq3_s.json.before-128k-20261007-110545.bak",
+    "E:\\Strata\\strata-iq3_s.log",
+    "E:\\Strata\\strata-iq3_s.shared-settings.json",
+    "E:\\Strata\\strata-server-iq3_s.out",
+    "E:\\Strata\\strata-server-iq3_s.pid"
+  ],
+  "preserve": [
+    "E:/Strata/engine",
+    "E:/Strata/.venv",
+    "E:/Strata-data/mtp",
+    "shared second shard, linked under the IQ3_XXS filename",
+    "qwen Codex profile, updated for IQ3_XXS",
+    "all GPT configuration"
+  ],
+  "context": 131072,
+  "auto_compact_token_limit": 110000,
+  "approval": "User approved download and removal only after new model verification",
+  "gpt_base_config_sha256_before": "826039611e99a1a3d97588af4fd742eb4ff6593fa5a3fc1e22ab757240bb5af1"
+}

@@ -1,0 +1,9 @@
+# Explicitly selected local profile; the normal GPT configuration stays in config.toml.
+model = "qwen3.8-flash-next-iq3_xxs"
+model_provider = "strata"
+model_context_window = 131072
+model_auto_compact_token_limit = 110000
+model_reasoning_effort = "high"
+model_reasoning_summary = "none"
+model_catalog_json = "C:/Users/daand/.codex/model-catalogs/strata.json"
+web_search = "disabled"

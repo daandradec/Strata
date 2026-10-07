@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "E:\Strata\install-iq3_xxs-local.py", line 227, in <module>
+    main()
+  File "E:\Strata\install-iq3_xxs-local.py", line 207, in main
+    long = chat(long_context_prompt(), timeout=1200)
+                ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\Strata\install-iq3_xxs-local.py", line 115, in long_context_prompt
+    import strata_tokenizer as ST
+  File "E:\Strata\tools\strata_tokenizer.py", line 22, in <module>
+    import regex
+ModuleNotFoundError: No module named 'regex'
