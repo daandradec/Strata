@@ -35,5 +35,7 @@
       "snapshot": "local-installation\\codex\\strata-model-catalog.json",
       "sha256": "8df15f476da37a477d10930a35fc8c29f85da553b1e1d1ad796c3c08bfbb8e2c"
     }
-  ]
+  ],
+  "engine_version": "0.1.40.3",
+  "upstream_commit": "d5ea7133741e67743c0e886bb426c0ce8d69cf6c"
 }

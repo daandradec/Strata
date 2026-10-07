@@ -1,0 +1,18 @@
+{
+  "upstream_commit": "d5ea7133741e67743c0e886bb426c0ce8d69cf6c",
+  "merge_commit": "db239caffd21a241529ba89cba7c6675fa0c0fa3",
+  "engine_version": "0.1.40.3",
+  "context_tokens": 131072,
+  "compact_at_tokens": 110000,
+  "port": 8081,
+  "server_started": false,
+  "checks_completed": [
+    "hotfix version parser",
+    "setup config",
+    "security and run config",
+    "native engine help",
+    "pip dependency consistency",
+    "Responses API, reasoning tools and HTTP server: 315 tests, 1 skipped"
+  ],
+  "updated_at": "2026-10-07T20:15:11.024166+00:00"
+}
