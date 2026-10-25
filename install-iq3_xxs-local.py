@@ -18,7 +18,7 @@ PYTHON = ROOT / '.venv/Scripts/python.exe'
 STATUS = ROOT / 'installation-iq3_xxs-status.json'
 LOG = ROOT / 'installation-iq3_xxs.log'
 CONFIG = ROOT / 'strata-iq3_xxs.json'
-PORT = 8081
+PORT = 38181
 
 def status(stage, **details):
     record = dict(stage=stage, model='IQ3_XXS', context=131072,
