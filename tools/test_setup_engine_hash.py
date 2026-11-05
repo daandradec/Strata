@@ -295,6 +295,12 @@ class WhatARefusalDoesToTheCaller(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         (Path(self.tmp.name) / "engine").mkdir(parents=True, exist_ok=True)
+        (Path(self.tmp.name) / "CMakeLists.txt").write_bytes((ROOT / "CMakeLists.txt").read_bytes())
+        # Otherwise a real cached engine in the developer checkout bypasses the
+        # mocked download entirely (and these tests accidentally inspect user state).
+        root = mock.patch.object(setup, "ROOT", Path(self.tmp.name))
+        root.start()
+        self.addCleanup(root.stop)
 
     def fake_download(self, url, dst, what=None):
         with zipfile.ZipFile(dst, "w") as z:

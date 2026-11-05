@@ -60,6 +60,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 WIN = os.name == "nt"
+BOOTSTRAP_STRICT = False  # only the explicitly requested, fixed bootstrap profile
+BOOTSTRAP_DATA_DIR = None
 # #214: every Hugging Face file comes from a fixed commit of its repository (the `sha` of
 # https://huggingface.co/api/models/<repo> when this was pinned), so a checkout installs the same files on any
 # day.  A revision the repository no longer has falls back to its current files, with a message (download()).
@@ -3374,6 +3376,8 @@ def confirm_risk(msg, explicit, yes, stop, hint=None, question="  Go on anyway?"
     consent when it was asked for explicitly (a flag such as --model or --gpus): --yes alone keeps the stop
     (stop, hint).  Returns when it goes on; the caller says what it does."""
     warn(msg)
+    if BOOTSTRAP_STRICT:
+        fail(stop, hint)
     if yes and explicit:
         return
     if ask(question, ["y", "n"], default, yes) != "y":
@@ -3583,6 +3587,10 @@ def data_folder(requested: str | None) -> tuple:
 def write_config(path: Path, cfg: dict):
     """A run config, written whole or not at all (#459): to a temporary file first, then moved over the old one, so
     a setup stopped half-way (a closed window, a full disk) never leaves an empty strata-*.json behind."""
+    if BOOTSTRAP_STRICT and BOOTSTRAP_DATA_DIR is not None:
+        import bootstrap_setup
+        bootstrap_setup.write_generated(ROOT, BOOTSTRAP_DATA_DIR, path, json.dumps(cfg, indent=1).encode("utf-8"))
+        return
     tmp = path.with_name(path.name + ".tmp")
     tmp.write_text(json.dumps(cfg, indent=1), encoding="utf-8")
     os.replace(tmp, path)
@@ -3680,7 +3688,7 @@ def write_setup_config(cfg_path: Path, cfg: dict, source: Path | None = None) ->
             old = None
     kept = carry_over(old, cfg) if old is not None else []
     bak = None
-    if cfg_path.is_file() and old != cfg:
+    if cfg_path.is_file() and old != cfg and not BOOTSTRAP_STRICT:
         bak = cfg_path.with_name(cfg_path.name + ".bak")
         try:
             shutil.copyfile(cfg_path, bak)
@@ -4436,8 +4444,13 @@ def write_run_script(model, cfg_path, port, open_browser=True):
              "--port", str(port)] + (["--open"] if open_browser else [])
     if WIN:
         script = ROOT / f"run-{model.lower()}.bat"
-        script.write_text("@echo off\r\ntitle Strata " + model + "\r\ncd /d \"" + str(ROOT) + "\"\r\n" +
-                          " ".join(f'"{x}"' for x in serve) + "\r\nif errorlevel 1 pause\r\n", encoding="utf-8")
+        text = "@echo off\r\ntitle Strata " + model + "\r\ncd /d \"" + str(ROOT) + "\"\r\n" + \
+               " ".join(f'"{x}"' for x in serve) + "\r\nif errorlevel 1 pause\r\n"
+        if BOOTSTRAP_STRICT and BOOTSTRAP_DATA_DIR is not None:
+            import bootstrap_setup
+            bootstrap_setup.write_generated(ROOT, BOOTSTRAP_DATA_DIR, script, text.encode("utf-8"))
+        else:
+            script.write_text(text, encoding="utf-8")
     else:
         script = ROOT / f"run-{model.lower()}.sh"
         script.write_text("#!/bin/sh\ncd \"" + str(ROOT) + "\"\nexec " + " ".join(f'"{x}"' for x in serve) + "\n",
@@ -4511,7 +4524,15 @@ def sycl_setup(argv) -> int:
 
 
 def main() -> int:
+    global BOOTSTRAP_STRICT, BOOTSTRAP_DATA_DIR
+    BOOTSTRAP_STRICT = False
+    BOOTSTRAP_DATA_DIR = None
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    bootstrap = ap.add_mutually_exclusive_group()
+    bootstrap.add_argument("--bootstrap-check", action="store_true",
+                           help="read-only JSON diagnostic for the conservative Windows IQ3_XXS/128K bootstrap")
+    bootstrap.add_argument("--bootstrap-install", action="store_true",
+                           help="install that fixed profile without starting, migrating other installs or accepting risks")
     ap.add_argument("--family", choices=list(FAMILIES), help="qwen = Qwen3.8-Flash-Next, swift = Swift 1.5")
     ap.add_argument("--model", choices=list(MODELS))
     ap.add_argument("--context", type=int)
@@ -4611,6 +4632,30 @@ def main() -> int:
                          "sycl = Intel Arc, EXPERIMENTAL: Linux, built from source (docs/INTEL_ARC.md)")
     ap.add_argument("--skip-build", action="store_true", help=argparse.SUPPRESS)
     a = ap.parse_args()
+    if a.bootstrap_check or a.bootstrap_install:
+        allowed = {"--bootstrap-check", "--bootstrap-install", "--data-dir"}
+        if any(v.startswith("-") and v.split("=", 1)[0] not in allowed for v in sys.argv[1:]):
+            ap.error("bootstrap modes accept only --data-dir; use normal setup for custom profiles")
+        sys.path.insert(0, str(ROOT / "tools"))
+        import bootstrap_setup
+        report = bootstrap_setup.check(sys.modules[__name__], a.data_dir)
+        if a.bootstrap_check:
+            print(json.dumps(report))
+            return 0 if report["ok"] else 1
+        if not report["ok"]:
+            fail("; ".join(report["errors"]))
+        # Fail before writes if an existing config would carry executable hooks/keys.
+        existing = ROOT / "strata-iq3_xxs.json"
+        if existing.is_file():
+            try:
+                prior = json.loads(existing.read_text(encoding="utf-8-sig"))
+            except (OSError, ValueError):
+                fail("existing IQ3_XXS config is unreadable; bootstrap did not replace it")
+            if not isinstance(prior, dict) or any(prior.get(k) for k in ("before_load", "mcp_servers", "api_key")):
+                fail("existing IQ3_XXS config has private/executable customizations; use manual setup")
+        bootstrap_setup.apply(sys.modules[__name__], a, report)
+        BOOTSTRAP_STRICT = True
+        BOOTSTRAP_DATA_DIR = Path(a.data_dir).resolve()
     if a.source:
         os.environ["STRATA_SOURCE"] = a.source
     if a.inspect:                                      # headers only: nothing is installed
@@ -4631,7 +4676,12 @@ def main() -> int:
         else:
             ap.error(f"--gpu takes a GPU number as nvidia-smi numbers them, e.g. --gpu 1 (or --gpus 0,2), not {a.gpu!r}")
     say("Strata - Qwen3.8-Flash-Next on a normal PC (a GPU + system RAM + CPU)")
-    data, elsewhere = data_folder(a.data_dir)          # the model files: in the data folder, found from any copy
+    if a.bootstrap_install:
+        # Deliberately do not scan/move other installations or change per-user settings.
+        data, elsewhere = Path(a.data_dir).resolve(), []
+        data.mkdir(parents=True, exist_ok=True)
+    else:
+        data, elsewhere = data_folder(a.data_dir)          # the model files: in the data folder, found from any copy
     roots = [data, *elsewhere]
     if a.models_dir is None:
         a.models_dir = str(data / "models")
